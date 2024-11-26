@@ -1,24 +1,24 @@
-import { BirthdayList } from "./components/BirthdayList";
+import { Suspense } from "react";
+import { BirthdayList, BirthdayListSkeleton } from "./components/BirthdayList";
 import { CachedUserData } from "./components/CachedUserData";
-import { UserProfile } from "./components/UserProfile";
-import { fetchMe } from "./lib/api";
+import {
+  LatestCarrousel,
+  LatestCarrouselSkeleton,
+} from "./components/LatestCarrousel";
 
 export default async function Home() {
-  const { data: user } = await fetchMe();
-
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
-        <BirthdayList />
-        <div>
-          <UserProfile user={user} />
+        <Suspense fallback={<BirthdayListSkeleton />}>
+          <BirthdayList />
+        </Suspense>
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">
-              Cached Component Example
-            </h2>
-            <CachedUserData />
-          </div>
+        <CachedUserData />
+        <div>
+          <Suspense fallback={<LatestCarrouselSkeleton />}>
+            <LatestCarrousel />
+          </Suspense>
         </div>
       </div>
     </>

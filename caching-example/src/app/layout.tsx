@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Suspense } from "react";
 import Footer from "./components/Footer";
 import "./globals.css";
 
@@ -22,11 +21,7 @@ export default function RootLayout({
         <header className="bg-blue-600 text-white p-4">
           <h1 className="text-2xl font-bold">Next.js 15 Dynamic IO Demo</h1>
         </header>
-        <main className="container mx-auto p-4">
-          <Suspense fallback={<div>Loading page content...</div>}>
-            {children}
-          </Suspense>
-        </main>
+        <main className="container mx-auto p-4">{children}</main>
         <Footer />
       </body>
     </html>

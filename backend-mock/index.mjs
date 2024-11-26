@@ -8,7 +8,7 @@ let users = [
     age: 30,
     email: "arthur@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-01-01",
+    birthday: "1999-11-26",
     badge: 12345,
     nickname: "Art",
     slackId: "U7X9Y2Z1A",
@@ -36,7 +36,7 @@ let users = [
     age: 32,
     email: "joão@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-11-25",
+    birthday: "1999-11-26",
     badge: 13579,
     nickname: "Jo",
     slackId: "U3F5G7H9J",
@@ -50,7 +50,7 @@ let users = [
     age: 100,
     email: "wagner@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-11-25",
+    birthday: "1999-11-26",
     badge: 24680,
     nickname: "Wag",
     slackId: "U4K6L8M0N",
@@ -101,10 +101,12 @@ app.get("/api/birthdays", (req, res) => {
     })
     .map(({ name, email, image }) => ({ name, email, image }));
 
-  res.send({
-    requestTime: new Date().getTime(),
-    data: currentBirthday,
-  });
+  setTimeout(() => {
+    res.send({
+      requestTime: new Date().getTime(),
+      data: currentBirthday,
+    });
+  }, 2000);
 });
 
 app.get("/api/users/:id", (req, res) => {
@@ -129,7 +131,7 @@ app.get("/api/me", (req, res) => {
 
   res.send({
     requestTime: new Date().getTime(),
-    data: users[0],
+    data: users.map(({ name, email, image }) => ({ name, email, image }))[0],
   });
 });
 
@@ -149,6 +151,17 @@ app.post("/api/me", (req, res) => {
       error: "Invalid user data",
     });
   }
+});
+
+app.get("/api/fullMe", (req, res) => {
+  console.log(`${new Date().toISOString()}: /me`);
+
+  setTimeout(() => {
+    res.send({
+      requestTime: new Date().getTime(),
+      data: users[0],
+    });
+  }, 2000);
 });
 
 app.get("/api/version", (req, res) => {
