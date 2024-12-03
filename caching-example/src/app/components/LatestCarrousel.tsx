@@ -1,17 +1,35 @@
-import { fetchBirthdays, User } from "../lib/api";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { fetchLatestUserIds, fetchUserById, User } from "../lib/api";
 
-async function getBirthdays() {
-  const { data } = await fetchBirthdays();
-  const sortedData = data.map((user: User) => ({
-    ...user,
-    name: user.name.toUpperCase(),
-  }));
+async function getLatestUsers() {
+  try {
+    const { data: latestUserIds } = await fetchLatestUserIds(3); // Fetch 5 latest user IDs
 
-  return sortedData;
+    const userPromises = latestUserIds.map(async (id: number) => {
+      const { data: user } = await fetchUserById(id);
+      return {
+        ...user,
+        name: user.name.toUpperCase(),
+      };
+    });
+
+    const users = await Promise.all(userPromises);
+
+    // Sort users by addedDate in descending order
+    return users.sort(
+      (a, b) =>
+        new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
+    );
+  } catch (error) {
+    console.error("Error fetching latest users:", error);
+    return [];
+  }
 }
 
 export async function LatestCarrousel() {
-  const birthdays = await getBirthdays();
+  "use cache";
+  cacheLife("days");
+  const birthdays = await getLatestUsers();
 
   return (
     <div className="mt-8 flex flex-col space-y-4 overflow-hidden">

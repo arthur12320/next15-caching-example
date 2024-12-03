@@ -8,7 +8,8 @@ let users = [
     age: 30,
     email: "arthur@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-11-26",
+    birthday: "1999-12-02",
+    addedDate: "1999-12-02",
     badge: 12345,
     nickname: "Art",
     slackId: "U7X9Y2Z1A",
@@ -22,7 +23,8 @@ let users = [
     age: 40,
     email: "tiago@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-11-27",
+    birthday: "1999-12-02",
+    addedDate: "1999-12-03",
     badge: 67890,
     nickname: "Ti",
     slackId: "U2B4C6D8E",
@@ -36,7 +38,8 @@ let users = [
     age: 32,
     email: "joão@cesar.com",
     costCenterOrigin: "6.3.07.001",
-    birthday: "1999-11-26",
+    birthday: "1999-12-02",
+    addedDate: "1999-12-04",
     badge: 13579,
     nickname: "Jo",
     slackId: "U3F5G7H9J",
@@ -51,6 +54,7 @@ let users = [
     email: "wagner@cesar.com",
     costCenterOrigin: "6.3.07.001",
     birthday: "1999-11-26",
+    addedDate: "1999-12-05",
     badge: 24680,
     nickname: "Wag",
     slackId: "U4K6L8M0N",
@@ -65,6 +69,7 @@ let users = [
     email: "henrique@cesar.com",
     costCenterOrigin: "6.3.07.002",
     birthday: "1999-02-01",
+    addedDate: "1999-12-06",
     badge: 97531,
     nickname: "Rick",
     slackId: "U5P7Q9R1S",
@@ -114,10 +119,12 @@ app.get("/api/users/:id", (req, res) => {
 
   const user = users.find((u) => u.id === parseInt(req.params.id));
   if (user) {
-    res.send({
-      requestTime: new Date().getTime(),
-      data: user,
-    });
+    setTimeout(() => {
+      res.send({
+        requestTime: new Date().getTime(),
+        data: user,
+      });
+    }, 2000);
   } else {
     res.status(404).send({
       requestTime: new Date().getTime(),
@@ -128,7 +135,7 @@ app.get("/api/users/:id", (req, res) => {
 
 app.get("/api/me", (req, res) => {
   console.log(`${new Date().toISOString()}: /me`);
-
+  console.log(users);
   res.send({
     requestTime: new Date().getTime(),
     data: users.map(({ name, email, image }) => ({ name, email, image }))[0],
@@ -178,7 +185,25 @@ app.get("/api/version", (req, res) => {
   });
 });
 
-const port = process.env.PORT || 8080;
+app.get("/api/latestUsers/:count", (req, res) => {
+  console.log(`${new Date().toISOString()}: /latestUsers/${req.params.count}`);
+
+  const count = parseInt(req.params.count, 10);
+  const usersCopy = [...users];
+  const sortedUsers = usersCopy.sort(
+    (a, b) => new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
+  );
+  const latestUserIds = sortedUsers.slice(0, count).map((user) => user.id);
+
+  setTimeout(() => {
+    res.send({
+      requestTime: new Date().getTime(),
+      data: latestUserIds,
+    });
+  }, 2000);
+});
+
+const port = process.env.PORT || 8082;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

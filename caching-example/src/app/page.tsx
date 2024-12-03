@@ -14,7 +14,9 @@ export default async function Home() {
           <BirthdayList />
         </Suspense>
 
-        <CachedUserData />
+        <Suspense fallback={<div>Carregando ....</div>}>
+          <CachedUserData />
+        </Suspense>
         <div>
           <Suspense fallback={<LatestCarrouselSkeleton />}>
             <LatestCarrousel />
